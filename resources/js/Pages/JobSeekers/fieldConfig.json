@@ -1,0 +1,2477 @@
+{
+    "India": {
+        "temporary": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "hire_type",
+                "label": "Hire Type",
+                "type": "text",
+                "required": "isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "business_unit_id",
+                "label": "Business Unit",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "dm_id",
+                "label": "Delivery Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_code",
+                "label": "Consultant Code",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Consultant Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "sap_id",
+                "label": "SAP ID",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "client_reporting_manager",
+                "label": "Client Reporting Manager",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backout/Term Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backout/Term Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backout/Term Year",
+                "type": "select",
+                "required": false,
+                "default": 2025,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "pay_rate",
+                "label": "Pay Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "pay_rate_1",
+                "label": "Pay Rate 1",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "bill_rate",
+                "label": "Bill Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "gp_month",
+                "label": "GP/Month",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "otc",
+                "label": "OTC",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "otc_split",
+                "label": "OTC Split",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "msp_fees",
+                "label": "MSP Fees",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_cost",
+                "label": "Loaded Cost",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_gp",
+                "label": "Final GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "percentage_gp",
+                "label": "% GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "end_client",
+                "label": "End Client",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ],
+        "permanent": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "business_unit_id",
+                "label": "Business Unit",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "dm_id",
+                "label": "Delivery Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Candidate Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "select_month",
+                "label": "Select Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backout Out Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backout Out Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backout Out Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+        "name": "bo_type",
+        "label": "BO Type",
+        "type": "select",
+        "options": [
+          { "value": "", "label": "Select BO Type" },
+          { "value": "Client BO", "label": "Client BO" },
+          { "value": "Candidate BO", "label": "Candidate BO" }
+        ],
+        "required": false,
+        "section": "Backout Information"
+      },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+          
+            {
+                "name": "ctc_offered",
+                "label": "CTC Offered",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "billing_value",
+                "label": "Billing Value",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_gp",
+                "label": "Loaded GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_billing_value",
+                "label": "Final Billing Value",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "actual_billing_value",
+                "label": "Actual Billing Value",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "invoice_no",
+                "label": "Invoice No",
+                "type": "text",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ]
+    },
+    "APAC": {
+        "temporary": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+          {
+                "name": "hire_type",
+                "label": "Hire Type",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Hire Type" },
+                    { "value": "ABN", "label": "ABN (5%)" },
+                    { "value": "PAGT", "label": "PAGT (8%)" }
+                ],
+                "required": "isAdmin",
+                "section": "Basic Information",
+                "onChange": "handleHireTypeChange"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_code",
+                "label": "Consultant Code",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Consultant Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "sap_id",
+                "label": "SAP ID",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backoutout/Term Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backoutout/Term Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backoutout/Term Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "pay_rate",
+                "label": "Pay Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "pay_rate_1",
+                "label": "Pay Rate 1",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "bill_rate",
+                "label": "Bill Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "gp_month",
+                "label": "GP/Month",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "msp_fees",
+                "label": "MSP Fees",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_cost",
+                "label": "Loaded Cost",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_gp",
+                "label": "Final GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "percentage_gp",
+                "label": "% GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "end_client",
+                "label": "End Client",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ],
+        "permanent": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Candidate Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "select_month",
+                "label": "Select Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backout Out Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backout Out Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backout Out Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+        "name": "bo_type",
+        "label": "BO Type",
+        "type": "select",
+        "options": [
+          { "value": "", "label": "Select BO Type" },
+          { "value": "Client BO", "label": "Client BO" },
+          { "value": "Candidate BO", "label": "Candidate BO" }
+        ],
+        "required": false,
+        "section": "Backout Information"
+      },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+           
+            {
+                "name": "ctc_offered",
+                "label": "CTC Offered",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "billing_value",
+                "label": "Billing Value",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_gp",
+                "label": "Loaded GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_billing_value",
+                "label": "Final Billing Value",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "actual_billing_value",
+                "label": "Actual Billing Value",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "invoice_no",
+                "label": "Invoice No",
+                "type": "text",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ]
+    },
+    "EU-UK": {
+        "temporary": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "hire_type",
+                "label": "Hire Type",
+                "type": "text",
+                "required": "isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "end_client",
+                "label": "End Client",
+                "type": "text",
+                "required": true,
+                "section": "Client Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Consultant Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backoutout/End Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backoutout/End Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backoutout/End Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+          
+            {
+                "name": "pay_rate",
+                "label": "Pay Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "bill_rate",
+                "label": "Bill Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "pay_rate_usd",
+                "label": "Pay Rate (USD)",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "bill_rate_usd",
+                "label": "Bill Rate (USD)",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "basic_pay_rate",
+                "label": "Basic Pay Rate",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "benefits",
+                "label": "Benefits",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "gp_hour",
+                "label": "GP/Hour",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "gp_hour_usd",
+                "label": "GP/Hour (USD)",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "percentage_gp",
+                "label": "GP %",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "client_reporting_manager",
+                "label": "Manager",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "consultant_code",
+                "label": "Placement Code (Ceipal)",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ],
+        "permanent": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Candidate Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "select_month",
+                "label": "Select Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backout Out Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backout Out Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backout Out Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+        "name": "bo_type",
+        "label": "BO Type",
+        "type": "select",
+        "options": [
+          { "value": "", "label": "Select BO Type" },
+          { "value": "Client BO", "label": "Client BO" },
+          { "value": "Candidate BO", "label": "Candidate BO" }
+        ],
+        "required": false,
+        "section": "Backout Information"
+      },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+           
+            {
+                "name": "ctc_offered",
+                "label": "CTC Offered",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "billing_value",
+                "label": "Billing Value",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_gp",
+                "label": "Loaded GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_billing_value",
+                "label": "Final Billing Value",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "actual_billing_value",
+                "label": "Actual Billing Value",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "invoice_no",
+                "label": "Invoice No",
+                "type": "text",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ]
+    },
+    "Aegis": {
+        "temporary": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "hire_type",
+                "label": "Hire Type",
+                "type": "text",
+                "required": "isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_code",
+                "label": "Placement Code (Ceipal)",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Consultant Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "sap_id",
+                "label": "SAP ID",
+                "type": "text",
+                "required": false,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backoutout Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backoutout Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backoutout Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "pay_rate",
+                "label": "Pay Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "pay_rate_1",
+                "label": "Pay Rate 1",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "bill_rate",
+                "label": "Bill Rate",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information",
+                "onChange": "handleFinancialChange"
+            },
+            {
+                "name": "gp_month",
+                "label": "GP/Month",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_cost",
+                "label": "Loaded Cost",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_gp",
+                "label": "Final GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "percentage_gp",
+                "label": "% GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "end_client",
+                "label": "End Client",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "domain",
+                "label": "Domain",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ],
+        "permanent": [
+            {
+                "name": "company_id",
+                "label": "Country",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "readOnly": "!isAdmin",
+                "section": "Basic Information"
+            },
+            {
+                "name": "location_id",
+                "label": "Location",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Basic Information"
+            },
+            {
+                "name": "am_id",
+                "label": "Account Manager",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "tl_id",
+                "label": "Team Leader",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "recruiter_id",
+                "label": "Recruiter",
+                "type": "select",
+                "options": [],
+                "required": false,
+                "section": "Team Information"
+            },
+            {
+                "name": "consultant_name",
+                "label": "Candidate Name",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "skill",
+                "label": "Skills",
+                "type": "text",
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "status_id",
+                "label": "Status",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Consultant Information"
+            },
+            {
+                "name": "client_id",
+                "label": "Client",
+                "type": "select",
+                "options": [],
+                "required": true,
+                "section": "Client Information",
+                "onChange": "handleClientChange"
+            },
+            {
+                "name": "poc",
+                "label": "POC",
+                "type": "text",
+                "required": false,
+                "section": "Client Information"
+            },
+            {
+                "name": "quarter",
+                "label": "Quarter",
+                "type": "text",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "selection_date",
+                "label": "Selection Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "select_month",
+                "label": "Select Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "offer_date",
+                "label": "Offer Date",
+                "type": "date",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_date",
+                "label": "Join Date",
+                "type": "date",
+                "required": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_month",
+                "label": "Join Month",
+                "type": "month",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "join_year",
+                "label": "Join Year",
+                "type": "select",
+                "required": false,
+                "section": "Date Information"
+            },
+            {
+                "name": "qly_date",
+                "label": "Qualify Date",
+                "type": "date",
+                "readOnly": true,
+                "section": "Date Information"
+            },
+            {
+                "name": "backout_term_date",
+                "label": "Backout Out Date",
+                "type": "date",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_month",
+                "label": "Backout Out Month",
+                "type": "month",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "backout_term_year",
+                "label": "Backout Out Year",
+                "type": "select",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_attrition",
+                "label": "Reason of Attrition",
+                "type": "text",
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "type_of_attrition",
+                "label": "Type of Attrition",
+                "type": "select",
+                "options": [
+                    { "value": "", "label": "Select Type of Attrition" },
+                    { "value": "Voluntary", "label": "Voluntary" },
+                    { "value": "Involuntary", "label": "Involuntary" }
+                ],
+                "required": false,
+                "section": "Backout Information"
+            },
+            {
+                "name": "reason_of_rejection",
+                "label": "Reason of Rejection",
+                "type": "text",
+                "required": false,
+                "visibleOnCreate": false,
+                "readOnly": "isEditing && jobSeeker.form_status === 'Rejected'",
+                "section": "Backout Information"
+            },
+            {
+        "name": "bo_type",
+        "label": "BO Type",
+        "type": "select",
+        "options": [
+          { "value": "", "label": "Select BO Type" },
+          { "value": "Client BO", "label": "Client BO" },
+          { "value": "Candidate BO", "label": "Candidate BO" }
+        ],
+        "required": false,
+        "section": "Backout Information"
+      },
+            {
+                "name": "po_end_date",
+                "label": "PO End Date",
+                "type": "date",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_month",
+                "label": "PO End Month",
+                "type": "month",
+                "required": false,
+                "section": "PO Information"
+            },
+            {
+                "name": "po_end_year",
+                "label": "PO End Year",
+                "type": "select",
+                "required": false,
+                "section": "PO Information"
+            },
+           
+            {
+                "name": "ctc_offered",
+                "label": "CTC Offered",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "billing_value",
+                "label": "Billing Value",
+                "type": "number",
+                "required": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "loaded_gp",
+                "label": "Loaded GP",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "final_billing_value",
+                "label": "Final Billing Value",
+                "type": "number",
+                "readOnly": true,
+                "section": "Financial Information"
+            },
+            {
+                "name": "actual_billing_value",
+                "label": "Actual Billing Value",
+                "type": "number",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "invoice_no",
+                "label": "Invoice No",
+                "type": "text",
+                "required": false,
+                "section": "Financial Information"
+            },
+            {
+                "name": "lob",
+                "label": "LOB",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark1",
+                "label": "Remark",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "remark2",
+                "label": "Remark 2",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "sources",
+                "label": "Sources",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            },
+            {
+                "name": "domain",
+                "label": "Domain",
+                "type": "text",
+                "required": false,
+                "section": "Additional Information"
+            }
+        ]
+    }
+}
