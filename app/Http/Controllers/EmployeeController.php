@@ -546,7 +546,7 @@ class EmployeeController extends Controller
                     $value = trim($row[$colIndex] ?? '');
 
                     // Convert empty strings to null
-                    $data[$field] = $value !== '' ? $value : null;
+                    $data[$field] = ($value === '' || $value === '-') ? null : $value;
                 }
 
                 if (

@@ -27375,7 +27375,7 @@ a.edit-icon:hover {
   bottom: 0;
   backdrop-filter: blur(6px);
 }
-@media (max-width: 991.98px) {
+@media (max-width:575.98px) {
   .login-background::before {
     display: none;
   }

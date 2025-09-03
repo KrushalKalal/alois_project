@@ -322,21 +322,17 @@ class JobSeekerController extends Controller
                     ->where('client_status', $statusValue)
                     ->get(['id', 'client_code', 'client_name', 'qualify_days', 'loaded_cost']);
                 $assistantManagers = Employee::where('company_id', $companyId)
-                    ->where('status', 'active')
                     ->where('designation', 'AM')
-                    ->get(['id', 'emp_id', 'name']);
+                    ->get(['id', 'emp_id', 'name', 'status']);
                 $deputyManagers = Employee::where('company_id', $companyId)
-                    ->where('status', 'active')
                     ->where('designation', 'DM')
-                    ->get(['id', 'emp_id', 'name']);
+                    ->get(['id', 'emp_id', 'name', 'status']);
                 $teamLeaders = Employee::where('company_id', $companyId)
-                    ->where('status', 'active')
                     ->where('designation', 'TL')
-                    ->get(['id', 'emp_id', 'name']);
+                    ->get(['id', 'emp_id', 'name', 'status']);
                 $recruiters = Employee::where('company_id', $companyId)
-                    ->where('status', 'active')
                     ->where('designation', 'Recruiter')
-                    ->get(['id', 'emp_id', 'name']);
+                    ->get(['id', 'emp_id', 'name', 'status']);
 
                 // Filter statuses: Include 'FTE Conversion Fee' only for permanent job seekers in India
                 $statusQuery = StatusMaster::query()->select(['id', 'status']);
@@ -512,10 +508,10 @@ class JobSeekerController extends Controller
                 'businessUnits' => $companyId ? BusinessUnitMaster::where('company_id', $companyId)->where('unit_status', $statusValue)->get(['id', 'unit']) : [],
                 'statuses' => $statuses,
                 'clients' => $companyId ? Client::where('status', 'active')->where('company_id', $companyId)->where('client_status', $statusValue)->get(['id', 'client_code', 'client_name', 'qualify_days', 'loaded_cost']) : [],
-                'assistantManagers' => $companyId ? Employee::where('status', 'active')->where('designation', 'AM')->where('company_id', $companyId)->get(['id', 'emp_id', 'name']) : [],
-                'deputyManagers' => $companyId ? Employee::where('status', 'active')->where('designation', 'DM')->where('company_id', $companyId)->get(['id', 'emp_id', 'name']) : [],
-                'teamLeaders' => $companyId ? Employee::where('status', 'active')->where('designation', 'TL')->where('company_id', $companyId)->get(['id', 'emp_id', 'name']) : [],
-                'recruiters' => $companyId ? Employee::where('status', 'active')->where('designation', 'Recruiter')->where('company_id', $companyId)->get(['id', 'emp_id', 'name']) : [],
+                'assistantManagers' => $companyId ? Employee::where('company_id', $companyId)->where('designation', 'AM')->get(['id', 'emp_id', 'name', 'status']) : [],
+                'deputyManagers' => $companyId ? Employee::where('company_id', $companyId)->where('designation', 'DM')->get(['id', 'emp_id', 'name', 'status']) : [],
+                'teamLeaders' => $companyId ? Employee::where('company_id', $companyId)->where('designation', 'TL')->get(['id', 'emp_id', 'name', 'status']) : [],
+                'recruiters' => $companyId ? Employee::where('company_id', $companyId)->where('designation', 'Recruiter')->get(['id', 'emp_id', 'name', 'status']) : [],
                 'counts' => $this->getCounts($user, $employee, $type),
                 'employeeId' => $employee ? $employee->id : null,
                 'employeeCheckerId' => $employee && $employee->is_self_checker ? $employee->id : ($employee && $employee->checker ? $employee->checker->id : null),
@@ -1236,7 +1232,6 @@ class JobSeekerController extends Controller
             $statusValue = $type === 'temporary' ? 0 : 1;
             Log::info("Fetching employees for company_id: {$companyId}, type: {$type}, statusValue: {$statusValue}");
             $employees = Employee::where('company_id', $companyId)
-                ->where('status', 'active')
                 ->get(['id', 'emp_id', 'name', 'designation']);
             $result = [
                 'assistantManagers' => $employees->where('designation', 'AM')->values(),

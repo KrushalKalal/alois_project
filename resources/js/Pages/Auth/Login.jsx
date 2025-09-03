@@ -89,7 +89,7 @@ export default function Login({ status }) {
             <Head title="Log in" />
             <div className="row p-0">
                 <div className="col-lg-6 col-md-6 col-sm-12 p-0">
-                    <div className="login-background position-relative d-lg-flex align-items-center justify-content-center d-none flex-wrap vh-100">
+                    <div className="login-background position-relative d-md-flex align-items-center justify-content-center d-none flex-wrap vh-100">
                         <div className="bg-overlay-img">
                             <img
                                 src="assets/img/bg/bg-01.png"
