@@ -59,7 +59,6 @@ export default function AdminDashboard({
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
-                only: ["flash"], // Update only the flash message without changing the URL
             }
         );
     };
@@ -367,7 +366,7 @@ export default function AdminDashboard({
         <MainLayout title="Admin Dashboard" auth={auth}>
             <ToastContainer position="top-right" />
             <div className="container-fluid dashboard-width">
-                <div className="row mb-5" >
+                <div className="row mb-5">
                     <div className="col-lg-5 col-md-5 col-sm-12">
                         <div className="page-title-box">
                             <h4
@@ -377,67 +376,69 @@ export default function AdminDashboard({
                                 Admin Dashboard
                             </h4>
                             <p>Welcome, {auth.name} (Admin)</p>
-                            </div>
+                        </div>
                     </div>
-                     <div className="col-lg-7 col-md-7 col-sm-12">
-                         <div className="yearselect-btn"> 
+                    <div className="col-lg-7 col-md-7 col-sm-12">
+                        <div className="yearselect-btn">
                             <div className="">
                                 <div className="label-join-select">
-                                <label
-                                    htmlFor="yearSelect"
-                                    className="form-label"
-                                >
-                                    Select Year:
-                                </label>
-                                <select
-                                    id="yearSelect"
-                                    className="form-select"
-                                    value={year}
-                                    onChange={handleYearChange}
-                                    style={{ width: "150px" }}
-                                >
-                                    {availableYears &&
-                                    availableYears.length > 0 ? (
-                                        availableYears.map((year) => (
-                                            <option
-                                                key={year}
-                                                value={year}
-                                                disabled={year > currentYear}
-                                            >
-                                                {year}
-                                            </option>
-                                        ))
-                                    ) : (
-                                        <option value={year}>{year}</option>
-                                    )}
-                                </select>
+                                    <label
+                                        htmlFor="yearSelect"
+                                        className="form-label"
+                                    >
+                                        Select Year:
+                                    </label>
+                                    <select
+                                        id="yearSelect"
+                                        className="form-select"
+                                        value={year}
+                                        onChange={handleYearChange}
+                                        style={{ width: "150px" }}
+                                    >
+                                        {availableYears &&
+                                        availableYears.length > 0 ? (
+                                            availableYears.map((year) => (
+                                                <option
+                                                    key={year}
+                                                    value={year}
+                                                    disabled={
+                                                        year > currentYear
+                                                    }
+                                                >
+                                                    {year}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value={year}>{year}</option>
+                                        )}
+                                    </select>
                                 </div>
                             </div>
                             <div className="orange-btn">
-                            <button
-                                className="btn btn-primary "
-                                style={{
-                                    backgroundColor: "#F26522",
-                                    borderColor: "#F26522",
-                                }}
-                                onClick={handleExport}
-                            >
-                                Export to Excel
-                            </button>
-                            <button
-                                className="btn btn-primary "
-                                style={{
-                                    backgroundColor: "#F26522",
-                                    borderColor: "#F26522",
-                                }}
-                                onClick={() => handleSendEmail(activeTab)}
-                            >
-                                Send Email
-                            </button>
+                                <button
+                                    className="btn btn-primary "
+                                    style={{
+                                        backgroundColor: "#F26522",
+                                        borderColor: "#F26522",
+                                    }}
+                                    onClick={handleExport}
+                                >
+                                    Export to Excel
+                                </button>
+                                <button
+                                    className="btn btn-primary "
+                                    style={{
+                                        backgroundColor: "#F26522",
+                                        borderColor: "#F26522",
+                                    }}
+                                    onClick={() => handleSendEmail(activeTab)}
+                                >
+                                    Send Email
+                                </button>
                             </div>
-                         </div>   
                         </div>
-             </div>
+                    </div>
+                </div>
 
                 <div className="row">
                     <div className="col-12">
@@ -482,8 +483,7 @@ export default function AdminDashboard({
                         </div>
                     </div>
                 </div>
-         </div>
-
+            </div>
         </MainLayout>
     );
 }

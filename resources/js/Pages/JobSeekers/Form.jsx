@@ -547,9 +547,37 @@ export default function Form({
     const handleClientChange = (value, setData) => {
         const clientId = parseInt(value);
         const client = fetchedClients.find((c) => c.id === clientId);
+        // console.log("handleClientChange:", {
+        //     client_id: clientId,
+        //     client: client
+        //         ? {
+        //               id: client.id,
+        //               client_name: client.client_name,
+        //               loaded_cost: client.loaded_cost,
+        //               qualify_days: client.qualify_days,
+        //           }
+        //         : null,
+        //     pay_rate: data.pay_rate,
+        //     billing_value: data.billing_value,
+        //     join_date: data.join_date,
+        // });
         if (client) {
             const updates = {};
-            if (!isTemporary && data.billing_value) {
+            if (isTemporary && data.pay_rate) {
+                const payRate = parseFloat(data.pay_rate) || 0;
+                let loadedCostPercentage = parseFloat(client.loaded_cost) || 0;
+                if (
+                    country === "APAC" &&
+                    data.hire_type &&
+                    ["ABN", "PAGT"].includes(data.hire_type)
+                ) {
+                    loadedCostPercentage = data.hire_type === "ABN" ? 5 : 8;
+                }
+                const loadedCost = (payRate * loadedCostPercentage) / 100;
+                updates.loaded_cost = isNaN(loadedCost)
+                    ? "0.00"
+                    : loadedCost.toFixed(2);
+            } else if (!isTemporary && data.billing_value) {
                 const billingValue = parseFloat(data.billing_value) || 0;
                 const loadedCostPercentage =
                     parseFloat(client.loaded_cost) || 0;
@@ -560,15 +588,6 @@ export default function Form({
                 updates.final_billing_value = isNaN(billingValue - loadedGp)
                     ? "0.00"
                     : (billingValue - loadedGp).toFixed(2);
-            } else if (isTemporary && !["APAC"].includes(country)) {
-                // Only set loaded_cost for non-APAC temporary job seekers
-                const payRate = parseFloat(data.pay_rate) || 0;
-                const loadedCostPercentage =
-                    parseFloat(client.loaded_cost) || 0;
-                const loadedCost = (payRate * loadedCostPercentage) / 100;
-                updates.loaded_cost = isNaN(loadedCost)
-                    ? "0.00"
-                    : loadedCost.toFixed(2);
             }
             if (data.join_date) {
                 const joinDate = new Date(data.join_date);
@@ -580,12 +599,27 @@ export default function Form({
                     updates.qly_date = qlyDate.toISOString().split("T")[0];
                 }
             }
+            // console.log("Calculated:", {
+            //     pay_rate: isTemporary ? parseFloat(data.pay_rate) || 0 : null,
+            //     billing_value: !isTemporary ? parseFloat(data.billing_value) || 0 : null,
+            //     loaded_cost_percentage: loadedCostPercentage,
+            //     loaded_cost: isTemporary ? updates.loaded_cost : null,
+            //     loaded_gp: !isTemporary ? updates.loaded_gp : null,
+            //     final_billing_value: !isTemporary ? updates.final_billing_value : null,
+            //     qly_date: updates.qly_date || "N/A",
+            // });
             setData((prevData) => ({
                 ...prevData,
                 client_id: value,
                 ...updates,
             }));
         } else {
+            // console.warn("handleClientChange: Missing data", {
+            //     client: !!client,
+            //     pay_rate: !!data.pay_rate,
+            //     billing_value: !!data.billing_value,
+            //     join_date: !!data.join_date,
+            // });
             setData((prevData) => ({
                 ...prevData,
                 client_id: value,

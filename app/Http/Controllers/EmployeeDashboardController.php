@@ -863,32 +863,49 @@ class EmployeeDashboardController extends Controller
     {
         Log::info('Fetching PO Expiry Data for Company ID', ['company_id' => $companyId, 'year' => $selectedYear]);
 
+        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
+
+        if (!$joinedStatusId) {
+            Log::warning('No Joined status found in status_master for PO Expiry');
+            return [
+                ['poEndYear' => 'No Data', 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0]
+            ];
+        }
+
         $currentDate = Carbon::now();
+        $endOfSelectedYear = Carbon::create($selectedYear, 12, 31)->endOfDay();
+
         $poExpiryData = JobSeeker::where('company_id', $companyId)
             ->where('job_seeker_type', 'Temporary')
             ->where('form_status', 'Approved')
-            ->whereHas('status', function ($q) {
-                $q->where('status', 'Joined');
+            ->where('status_id', $joinedStatusId)
+            ->whereNotNull('join_date')
+            ->whereYear('join_date', '<=', $selectedYear)  // Include prior years (active carryover)
+            ->where(function ($query) use ($endOfSelectedYear) {
+                $query->whereNull('backout_term_date')
+                    ->orWhere('backout_term_date', '>', $endOfSelectedYear);  // Active in selected year
             })
-            ->where('po_end_date', '<=', $currentDate)
-            ->where('po_end_year', $selectedYear)
+            ->whereNotNull('po_end_date')
+            ->where('po_end_date', '<=', $currentDate)  // PO expired by now
+            ->where('po_end_year', $selectedYear)  // PO expired in selected year
             ->get()
             ->groupBy(['po_end_year', 'client_id']);
 
-        $poExpiryRows = [];
-        $grandTotalRow = [
-            'poEndYear' => 'Grand Total',
-            'client' => '',
-            'poEndMonth' => '',
-            'HC' => 0,
-            'BR' => 0,
-            'PR' => 0,
-            'Final_GP' => 0,
-            'GP%' => 0,
-        ];
-        $grandTotalHc = 0;
-        $grandTotalGpSum = 0;
+        Log::info('PO Expiry Query Results', [
+            'company_id' => $companyId,
+            'selected_year' => $selectedYear,
+            'total_records' => $poExpiryData->flatten()->count(),
+            'grouped_keys' => $poExpiryData->keys()->toArray(),
+        ]);
 
+        if ($poExpiryData->isEmpty()) {
+            return [
+                ['poEndYear' => $selectedYear, 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0],
+                ['poEndYear' => 'Total', 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0]
+            ];
+        }
+
+        $poExpiryRows = [];
         foreach ($poExpiryData as $year => $clients) {
             $poExpiryRows[] = [
                 'poEndYear' => $year,
@@ -900,11 +917,13 @@ class EmployeeDashboardController extends Controller
                 'Final_GP' => null,
                 'GP%' => null,
             ];
+
             $yearlyHc = 0;
             $yearlyGpPercent = 0;
             $yearClientRows = [];
+
             foreach ($clients as $clientId => $jobs) {
-                $clientName = $jobs->first()->client->client_name ?? 'Unknown';
+                $clientName = $jobs->first()->client ? $jobs->first()->client->client_name : 'Unknown';
                 $hc = $jobs->count();
                 $br = $jobs->sum('bill_rate') ?? 0;
                 $pr = $jobs->sum('pay_rate') ?? 0;
@@ -914,7 +933,7 @@ class EmployeeDashboardController extends Controller
                 $row = [
                     'poEndYear' => '',
                     'client' => $clientName,
-                    'poEndMonth' => $jobs->first()->po_end_month,
+                    'poEndMonth' => $jobs->first()->po_end_month ?? '',
                     'HC' => $hc,
                     'BR' => $br,
                     'PR' => $pr,
@@ -925,14 +944,8 @@ class EmployeeDashboardController extends Controller
                 $yearClientRows[] = $row;
                 $yearlyHc += $hc;
                 $yearlyGpPercent += $gpPercent * $hc;
-
-                // Update Grand Total
-                $grandTotalRow['HC'] += $hc;
-                $grandTotalRow['BR'] += $br;
-                $grandTotalRow['PR'] += $pr;
-                $grandTotalRow['Final_GP'] += $finalGp;
-                $grandTotalGpSum += $gpPercent * $hc;
             }
+
             $yearlyGpPercent = $yearlyHc > 0 ? ($yearlyGpPercent / $yearlyHc) : 0;
             $poExpiryRows[] = [
                 'poEndYear' => "$year Total",
@@ -944,14 +957,34 @@ class EmployeeDashboardController extends Controller
                 'Final_GP' => array_sum(array_column($yearClientRows, 'Final_GP')),
                 'GP%' => $yearlyGpPercent,
             ];
-            $grandTotalHc += $yearlyHc;
         }
 
-        // Add Grand Total row
-        $grandTotalRow['GP%'] = $grandTotalHc > 0 ? ($grandTotalGpSum / $grandTotalHc) : 0;
-        $poExpiryRows[] = $grandTotalRow;
+        $clientRows = array_filter($poExpiryRows, function ($row) {
+            return !empty($row['client']);
+        });
 
-        Log::info('PO Expiry Rows Generated', ['poExpiryRows' => $poExpiryRows]);
+        $grandTotalHC = array_sum(array_column($clientRows, 'HC') ?? [0]);
+        $grandTotalBR = array_sum(array_column($clientRows, 'BR') ?? [0]);
+        $grandTotalPR = array_sum(array_column($clientRows, 'PR') ?? [0]);
+        $grandTotalFinalGP = array_sum(array_column($clientRows, 'Final_GP') ?? [0]);
+        $grandTotalGPPercent = $grandTotalBR > 0 ? ($grandTotalFinalGP / $grandTotalBR * 100) : 0;
+
+        $poExpiryRows[] = [
+            'poEndYear' => 'Total',
+            'client' => '',
+            'poEndMonth' => '',
+            'HC' => $grandTotalHC,
+            'BR' => $grandTotalBR,
+            'PR' => $grandTotalPR,
+            'Final_GP' => $grandTotalFinalGP,
+            'GP%' => $grandTotalGPPercent,
+        ];
+
+        Log::info('PO Expiry Rows Generated', [
+            'poExpiryRows' => $poExpiryRows,
+            'grand_total_hc' => $grandTotalHC,
+            'grand_total_br' => $grandTotalBR,
+        ]);
 
         return $poExpiryRows;
     }
@@ -960,26 +993,28 @@ class EmployeeDashboardController extends Controller
     {
         Log::info('Fetching Contract Data for Company ID', ['company_id' => $companyId, 'year' => $selectedYear]);
 
+        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
+        $offeredStatusId = StatusMaster::where('status', 'Offered')->value('id');
+        $selectedStatusId = StatusMaster::where('status', 'Selected')->value('id');
+
         $jobSeekersQuery = JobSeeker::where('company_id', $companyId)
             ->where('job_seeker_type', 'Temporary')
             ->where('form_status', 'Approved');
 
-        $statusData = $jobSeekersQuery->get()->filter(function ($job) use ($selectedYear) {
-            if ($job->status_id == StatusMaster::where('status', 'Joined')->value('id') && $job->join_date) {
-                return Carbon::parse($job->join_date)->year == $selectedYear;
+        $statusData = $jobSeekersQuery->get()->filter(function ($job) use ($selectedYear, $joinedStatusId, $offeredStatusId, $selectedStatusId) {
+            if ($job->status_id == $joinedStatusId && $job->join_date) {
+                // Include active Joined from prior years
+                return Carbon::parse($job->join_date)->year <= $selectedYear &&
+                    (is_null($job->backout_term_date) || Carbon::parse($job->backout_term_date)->year > $selectedYear);
             }
-            if ($job->status_id == StatusMaster::where('status', 'Offered')->value('id') && $job->offer_date) {
+            if ($job->status_id == $offeredStatusId && $job->offer_date) {
                 return Carbon::parse($job->offer_date)->year == $selectedYear;
             }
-            if ($job->status_id == StatusMaster::where('status', 'Selected')->value('id') && $job->selection_date) {
+            if ($job->status_id == $selectedStatusId && $job->selection_date) {
                 return Carbon::parse($job->selection_date)->year == $selectedYear;
             }
             return false;
         })->groupBy('status_id');
-
-        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
-        $offeredStatusId = StatusMaster::where('status', 'Offered')->value('id');
-        $selectedStatusId = StatusMaster::where('status', 'Selected')->value('id');
 
         $contractRows = [];
         $statuses = [
@@ -1028,8 +1063,9 @@ class EmployeeDashboardController extends Controller
             }
         }
 
-        // Calculate Grand Total
-        $validStatusRows = array_filter($contractRows, fn($row) => !empty($row['status']) && $row['status'] !== 'Grand Total' && $row['HC'] > 0);
+        // Calculate Grand Total (only valid status rows with HC > 0)
+        $statusRows = array_filter($contractRows, fn($row) => !empty($row['status']) && $row['status'] !== 'Grand Total');
+        $validStatusRows = array_filter($statusRows, fn($row) => $row['HC'] > 0);
         $grandTotalHC = array_sum(array_column($validStatusRows, 'HC'));
         $grandTotalBR = array_sum(array_column($validStatusRows, 'BR'));
         $grandTotalPR = array_sum(array_column($validStatusRows, 'PR'));

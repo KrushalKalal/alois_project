@@ -691,10 +691,8 @@ class AdminDashboardController extends Controller
         $user = Auth::user();
         if ($user->role !== 'admin') {
             Log::warning('Unauthorized access to sendHelloEmail', ['user_id' => $user->id]);
-            return Inertia::render('Admin/Dashboard', array_merge(
-                $this->getDashboardData($request),
-                ['flash' => ['error' => 'Unauthorized']]
-            ));
+            return redirect()->back()->with('flash', ['error' => 'Unauthorized']);
+
         }
 
         try {
@@ -711,10 +709,8 @@ class AdminDashboardController extends Controller
                 'company_id' => $request->company_id,
                 'request_data' => $request->all(),
             ]);
-            return Inertia::render('Admin/Dashboard', array_merge(
-                $this->getDashboardData($request),
-                ['flash' => ['error' => $e->errors()['company_id'][0] ?? 'Invalid company ID.']]
-            ));
+            return redirect()->back()->with('error', ['error' => $e->errors()['company_id'][0] ?? 'Invalid company ID.']);
+
         }
 
         try {
@@ -734,10 +730,8 @@ class AdminDashboardController extends Controller
 
             if (empty($toEmails)) {
                 Log::warning('No To email addresses found for company', ['company_id' => $company->id]);
-                return Inertia::render('Admin/Dashboard', array_merge(
-                    $this->getDashboardData($request),
-                    ['flash' => ['error' => 'No To email addresses found for this company.']]
-                ));
+                return redirect()->back()->with('error', ['error' => 'No To email addresses found for this company.']);
+
             }
 
             // Validate email addresses
@@ -750,10 +744,8 @@ class AdminDashboardController extends Controller
 
             if (empty($validToEmails)) {
                 Log::warning('No valid To email addresses found', ['company_id' => $company->id]);
-                return Inertia::render('Admin/Dashboard', array_merge(
-                    $this->getDashboardData($request),
-                    ['flash' => ['error' => 'No valid To email addresses found for this company.']]
-                ));
+                return redirect()->back()->with('error', ['error' => 'No valid To email addresses found for this company.']);
+
             }
 
             // Calculate months (same logic as in generateExcel)
@@ -889,10 +881,8 @@ class AdminDashboardController extends Controller
                 'to_emails' => $validToEmails,
                 'cc_emails' => $validCcEmails,
             ]);
-            return Inertia::render('Admin/Dashboard', array_merge(
-                $this->getDashboardData($request),
-                ['flash' => ['success' => 'Email sent successfully.']]
-            ));
+            return redirect()->back()->with('success', 'Email sent successfully.');
+
         } catch (\Exception $e) {
             Log::error('Exception in sendHelloEmail', [
                 'error' => $e->getMessage(),
@@ -907,10 +897,7 @@ class AdminDashboardController extends Controller
                     'encryption' => config('mail.encryption'),
                 ],
             ]);
-            return Inertia::render('Admin/Dashboard', array_merge(
-                $this->getDashboardData($request),
-                ['flash' => ['error' => 'Failed to send email: ' . $e->getMessage()]]
-            ));
+            return redirect()->back()->with('error', 'Failed to send email: ' . $e->getMessage());
         }
     }
     private function getPermanentData($companyId, $selectedYear, $months)
@@ -1171,22 +1158,52 @@ class AdminDashboardController extends Controller
     {
         Log::info('Fetching PO Expiry Data for Company ID', ['company_id' => $companyId, 'year' => $selectedYear]);
 
+        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
+
+        if (!$joinedStatusId) {
+            Log::warning('No Joined status found in status_master for PO Expiry');
+            return [
+                ['poEndYear' => 'No Data', 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0]
+            ];
+        }
+
         $currentDate = Carbon::now();
+        $endOfSelectedYear = Carbon::create($selectedYear, 12, 31)->endOfDay();
+
         $poExpiryData = JobSeeker::where('company_id', $companyId)
             ->where('job_seeker_type', 'Temporary')
             ->where('form_status', 'Approved')
-            ->whereHas('status', function ($q) {
-                $q->where('status', 'Joined');
+            ->where('status_id', $joinedStatusId)
+            ->whereNotNull('join_date')
+            ->whereYear('join_date', '<=', $selectedYear)
+            ->where(function ($query) use ($endOfSelectedYear) {
+                $query->whereNull('backout_term_date')
+                    ->orWhere('backout_term_date', '>', $endOfSelectedYear);
             })
+            ->whereNotNull('po_end_date')
             ->where('po_end_date', '<=', $currentDate)
             ->where('po_end_year', $selectedYear)
             ->get()
             ->groupBy(['po_end_year', 'client_id']);
 
-        $poExpiryRows = [];
-        $yearlyTotals = [];
+        Log::info('PO Expiry Query Results', [
+            'company_id' => $companyId,
+            'selected_year' => $selectedYear,
+            'total_records' => $poExpiryData->flatten()->count(),
+            'grouped_keys' => $poExpiryData->keys()->toArray(),
+        ]);
 
+
+        if ($poExpiryData->isEmpty()) {
+            return [
+                ['poEndYear' => $selectedYear, 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0],
+                ['poEndYear' => 'Total', 'client' => '', 'poEndMonth' => '', 'HC' => 0, 'BR' => 0, 'PR' => 0, 'Final_GP' => 0, 'GP%' => 0]
+            ];
+        }
+
+        $poExpiryRows = [];
         foreach ($poExpiryData as $year => $clients) {
+
             $poExpiryRows[] = [
                 'poEndYear' => $year,
                 'client' => '',
@@ -1197,21 +1214,23 @@ class AdminDashboardController extends Controller
                 'Final_GP' => null,
                 'GP%' => null,
             ];
+
             $yearlyHc = 0;
             $yearlyGpPercent = 0;
             $yearClientRows = [];
+
             foreach ($clients as $clientId => $jobs) {
-                $clientName = $jobs->first()->client->client_name ?? 'Unknown';
+                $clientName = $jobs->first()->client ? $jobs->first()->client->client_name : 'Unknown';
                 $hc = $jobs->count();
                 $br = $jobs->sum('bill_rate') ?? 0;
                 $pr = $jobs->sum('pay_rate') ?? 0;
                 $finalGp = $jobs->sum('final_gp') ?? 0;
-                $gpPercent = $hc > 0 ? ($jobs->sum('percentage_gp') / $hc) : 0;
+                $gpPercent = $hc > 0 ? ($jobs->sum('percentage_gp') / $hc) : 0;  // Average GP%
 
                 $row = [
                     'poEndYear' => '',
                     'client' => $clientName,
-                    'poEndMonth' => $jobs->first()->po_end_month,
+                    'poEndMonth' => $jobs->first()->po_end_month ?? '',  // First job's PO month
                     'HC' => $hc,
                     'BR' => $br,
                     'PR' => $pr,
@@ -1223,6 +1242,8 @@ class AdminDashboardController extends Controller
                 $yearlyHc += $hc;
                 $yearlyGpPercent += $gpPercent * $hc;
             }
+
+
             $yearlyGpPercent = $yearlyHc > 0 ? ($yearlyGpPercent / $yearlyHc) : 0;
             $poExpiryRows[] = [
                 'poEndYear' => "$year Total",
@@ -1235,6 +1256,7 @@ class AdminDashboardController extends Controller
                 'GP%' => $yearlyGpPercent,
             ];
         }
+
 
         $clientRows = array_filter($poExpiryRows, function ($row) {
             return !empty($row['client']);
@@ -1257,6 +1279,12 @@ class AdminDashboardController extends Controller
             'GP%' => $grandTotalGPPercent,
         ];
 
+        Log::info('PO Expiry Rows Generated', [
+            'poExpiryRows' => $poExpiryRows,
+            'grand_total_hc' => $grandTotalHC,
+            'grand_total_br' => $grandTotalBR,
+        ]);
+
         return $poExpiryRows;
     }
 
@@ -1264,13 +1292,19 @@ class AdminDashboardController extends Controller
     {
         Log::info('Fetching Contract Data for Company ID', ['company_id' => $companyId, 'year' => $selectedYear]);
 
+        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
+        $offeredStatusId = StatusMaster::where('status', 'Offered')->value('id');
+        $selectedStatusId = StatusMaster::where('status', 'Selected')->value('id');
+
         $jobSeekersQuery = JobSeeker::where('company_id', $companyId)
             ->where('job_seeker_type', 'Temporary')
             ->where('form_status', 'Approved');
 
-        $statusData = $jobSeekersQuery->get()->filter(function ($job) use ($selectedYear) {
-            if ($job->status_id == StatusMaster::where('status', 'Joined')->value('id') && $job->join_date) {
-                return Carbon::parse($job->join_date)->year == $selectedYear;
+        $statusData = $jobSeekersQuery->get()->filter(function ($job) use ($selectedYear, $joinedStatusId) {
+            if ($job->status_id == $joinedStatusId && $job->join_date) {
+
+                return Carbon::parse($job->join_date)->year <= $selectedYear &&
+                    (is_null($job->backout_term_date) || Carbon::parse($job->backout_term_date)->year > $selectedYear);
             }
             if ($job->status_id == StatusMaster::where('status', 'Offered')->value('id') && $job->offer_date) {
                 return Carbon::parse($job->offer_date)->year == $selectedYear;
@@ -1281,9 +1315,7 @@ class AdminDashboardController extends Controller
             return false;
         })->groupBy('status_id');
 
-        $joinedStatusId = StatusMaster::where('status', 'Joined')->value('id');
-        $offeredStatusId = StatusMaster::where('status', 'Offered')->value('id');
-        $selectedStatusId = StatusMaster::where('status', 'Selected')->value('id');
+
 
         $contractRows = [];
         $statuses = [
