@@ -1416,6 +1416,7 @@ class JobSeekerController extends Controller
                 'percentage_gp' => 'nullable|numeric',
                 'gp_hour' => 'nullable|numeric',
                 'gp_hour_usd' => 'nullable|numeric',
+                'bo_type' => 'nullable|in:Client BO,Candidate BO',
             ]);
 
             $company = CompanyMaster::find($companyId);
@@ -1449,7 +1450,7 @@ class JobSeekerController extends Controller
                 'join_month' => 'nullable|string',
                 'join_year' => 'nullable|integer',
                 'select_month' => 'nullable|string',
-                'bo_type' => 'nullable|in:Client BO,Candidate BO',
+
             ]);
         }
 
@@ -1500,6 +1501,7 @@ class JobSeekerController extends Controller
                     ['name' => 'backout_term_year', 'label' => 'Backout/Term Year'],
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
+                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
@@ -1549,7 +1551,6 @@ class JobSeekerController extends Controller
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
-                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
                     ['name' => 'po_end_year', 'label' => 'PO End Year'],
@@ -1595,6 +1596,7 @@ class JobSeekerController extends Controller
                     ['name' => 'backout_term_year', 'label' => 'Backoutout/Term Year'],
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
+                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
@@ -1640,7 +1642,6 @@ class JobSeekerController extends Controller
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
-                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
                     ['name' => 'po_end_year', 'label' => 'PO End Year'],
@@ -1682,6 +1683,7 @@ class JobSeekerController extends Controller
                     ['name' => 'backout_term_year', 'label' => 'Backoutout/End Year'],
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
+                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
@@ -1730,7 +1732,6 @@ class JobSeekerController extends Controller
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
-                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
                     ['name' => 'po_end_year', 'label' => 'PO End Year'],
@@ -1776,6 +1777,7 @@ class JobSeekerController extends Controller
                     ['name' => 'backout_term_year', 'label' => 'Backoutout Year'],
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
+                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
@@ -1821,7 +1823,6 @@ class JobSeekerController extends Controller
                     ['name' => 'reason_of_attrition', 'label' => 'Reason of Attrition'],
                     ['name' => 'type_of_attrition', 'label' => 'Type of Attrition'],
                     ['name' => 'reason_of_rejection', 'label' => 'Reason of Rejection'],
-                    ['name' => 'bo_type', 'label' => 'BO Type'],
                     ['name' => 'po_end_date', 'label' => 'PO End Date'],
                     ['name' => 'po_end_month', 'label' => 'PO End Month'],
                     ['name' => 'po_end_year', 'label' => 'PO End Year'],

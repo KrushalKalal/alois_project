@@ -1214,6 +1214,7 @@ export default function Form({
             if (joinDate > today) {
                 // console.log("Join date validation failed:", {
                 //     status_id: data.status_id,
+
                 //     join_date: data.join_date,
                 //     today: today.toISOString().split("T")[0],
                 //     normalized_join_date: joinDate.toISOString().split("T")[0],
@@ -1225,7 +1226,7 @@ export default function Form({
             }
         }
 
-        if (data.type_of_attrition && !data.bo_type) {
+        if (isTemporary && data.type_of_attrition && !data.bo_type) {
             toast.error(
                 "Please select a BO Type when Type of Attrition is set."
             );
