@@ -594,21 +594,31 @@ class JobSeekerController extends Controller
 
             $counts = $this->getCounts($user, $employee, $type);
 
-            return Redirect::route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
+            return to_route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
                 'success' => 'Job Seeker created successfully',
                 'counts' => $counts,
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("Validation failed for Job Seeker creation", [
+                'user_id' => auth()->id(),
+                'type' => $type,
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+            return back()->withErrors($e->errors())->withInput()->with([
+                'error' => 'Failed to create Job Seeker. Please check the form errors.',
             ]);
         } catch (\Exception $e) {
             Log::error("Failed to create Job Seeker for type {$type}: " . $e->getMessage(), [
                 'user_id' => auth()->id(),
                 'request_data' => $request->all(),
             ]);
-            return Redirect::route("job-seekers.{$type}.index")->with([
+            return back()->with([
                 'error' => 'Failed to create Job Seeker: ' . $e->getMessage(),
             ]);
         }
     }
-
     public function update(Request $request, $id)
     {
         try {
@@ -721,16 +731,28 @@ class JobSeekerController extends Controller
 
             $counts = $this->getCounts($user, $employee, $type);
 
-            return Redirect::route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
+            return to_route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
                 'success' => 'Job Seeker updated successfully',
                 'counts' => $counts,
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("Validation failed for Job Seeker update", [
+                'user_id' => auth()->id(),
+                'type' => $type,
+                'job_seeker_id' => $id,
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ]);
+            return back()->withErrors($e->errors())->withInput()->with([
+                'error' => 'Failed to update Job Seeker. Please check the form errors.',
             ]);
         } catch (\Exception $e) {
             Log::error("Failed to update Job Seeker ID {$id} for type {$type}: " . $e->getMessage(), [
                 'user_id' => auth()->id(),
                 'request_data' => $request->all(),
             ]);
-            return Redirect::route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
+            return back()->with([
                 'error' => 'Failed to update Job Seeker: ' . $e->getMessage(),
             ]);
         }
