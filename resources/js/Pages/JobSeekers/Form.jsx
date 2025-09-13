@@ -1010,6 +1010,19 @@ export default function Form({
         }
 
         const isReadOnly = isFieldReadOnly(field);
+        const isBackout = data.status_id === "8";
+        const isTermination = data.status_id === "9";
+        const isMandatory =
+            (isBackout || isTermination) &&
+            [
+                "backout_term_date",
+                "backout_term_month",
+                "backout_term_year",
+                ...(isTermination
+                    ? ["reason_of_attrition", "type_of_attrition"]
+                    : []),
+                ...(isTemporary && isBackout ? ["bo_type"] : []),
+            ].includes(field.name);
         const value =
             field.type === "select"
                 ? data[field.name] != null
@@ -1106,7 +1119,7 @@ export default function Form({
                     <div key={field.name} className="col-md-4 mb-3">
                         <label className="form-label">
                             {field.label}{" "}
-                            {field.required && (
+                            {(field.required || isMandatory) && (
                                 <span className="text-danger">*</span>
                             )}
                         </label>
@@ -1135,7 +1148,7 @@ export default function Form({
                     <div key={field.name} className="col-md-4 mb-3">
                         <label className="form-label">
                             {field.label}{" "}
-                            {field.required && (
+                            {(field.required || isMandatory) && (
                                 <span className="text-danger">*</span>
                             )}
                         </label>
@@ -1147,7 +1160,7 @@ export default function Form({
                             value={value}
                             onChange={handleChange}
                             disabled={isReadOnly}
-                            required={field.required}
+                            required={field.required || isMandatory}
                             style={
                                 isReadOnly ? { backgroundColor: "#e9ecef" } : {}
                             }
@@ -1226,11 +1239,33 @@ export default function Form({
             }
         }
 
-        if (isTemporary && data.type_of_attrition && !data.bo_type) {
-            toast.error(
-                "Please select a BO Type when Type of Attrition is set."
+        if (data.status_id === "8" || data.status_id === "9") {
+            const requiredFields = [
+                "backout_term_date",
+                "backout_term_month",
+                "backout_term_year",
+                ...(data.status_id === "9"
+                    ? ["reason_of_attrition", "type_of_attrition"]
+                    : []),
+                ...(isTemporary && data.status_id === "8" ? ["bo_type"] : []),
+            ];
+            const missingFields = requiredFields.filter(
+                (field) => !data[field] || data[field] === ""
             );
-            return;
+            if (missingFields.length > 0) {
+                toast.error(
+                    `Please fill out the following required fields for ${
+                        data.status_id === "8" ? "Backout" : "Termination"
+                    } status: ${missingFields
+                        .map(
+                            (field) =>
+                                fields.find((f) => f.name === field)?.label ||
+                                field
+                        )
+                        .join(", ")}`
+                );
+                return;
+            }
         }
 
         const method = isEdit ? put : post;

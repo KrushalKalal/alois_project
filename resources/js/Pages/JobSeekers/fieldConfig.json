@@ -215,17 +215,17 @@
                 "section": "Backout Information"
             },
              {
-        "name": "bo_type",
-        "label": "BO Type",
-        "type": "select",
-        "options": [
-          { "value": "", "label": "Select BO Type" },
-          { "value": "Client BO", "label": "Client BO" },
-          { "value": "Candidate BO", "label": "Candidate BO" }
-        ],
-        "required": false,
-        "section": "Backout Information"
-      },
+            "name": "bo_type",
+            "label": "BO Type",
+            "type": "select",
+             "options": [
+             { "value": "", "label": "Select BO Type" },
+             { "value": "Client BO", "label": "Client BO" },
+             { "value": "Candidate BO", "label": "Candidate BO" }
+           ],
+           "required": false,
+           "section": "Backout Information"
+          },
             {
                 "name": "reason_of_rejection",
                 "label": "Reason of Rejection",

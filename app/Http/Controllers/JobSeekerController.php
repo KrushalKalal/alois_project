@@ -1397,6 +1397,23 @@ class JobSeekerController extends Controller
             'bd_absconding_term' => 'nullable|string',
         ];
 
+        if ($statusId == 8) { // Backout
+            $rules['backout_term_date'] = 'required|date';
+            $rules['backout_term_month'] = 'required|string|regex:/^\d{4}-\d{2}$/';
+            $rules['backout_term_year'] = 'required|integer|min:1900|max:9999';
+            if ($type === 'temporary') {
+                $rules['bo_type'] = 'required|in:Client BO,Candidate BO';
+            }
+        }
+
+        if ($statusId == 9) { // Termination
+            $rules['backout_term_date'] = 'required|date';
+            $rules['backout_term_month'] = 'required|string|regex:/^\d{4}-\d{2}$/';
+            $rules['backout_term_year'] = 'required|integer|min:1900|max:9999';
+            $rules['reason_of_attrition'] = 'required|string|max:1000';
+            $rules['type_of_attrition'] = 'required|in:Voluntary,Involuntary';
+        }
+
         if ($statusId == $joinedStatusId) {
             $rules['join_date'] = 'required|date|before_or_equal:' . Carbon::today()->toDateString();
         }
@@ -1416,7 +1433,7 @@ class JobSeekerController extends Controller
                 'percentage_gp' => 'nullable|numeric',
                 'gp_hour' => 'nullable|numeric',
                 'gp_hour_usd' => 'nullable|numeric',
-                'bo_type' => 'nullable|in:Client BO,Candidate BO',
+
             ]);
 
             $company = CompanyMaster::find($companyId);
@@ -1460,7 +1477,21 @@ class JobSeekerController extends Controller
         } elseif ($request->user()->employee && $request->user()->employee->role === 'finance_maker') {
             $rules = array_intersect_key($rules, array_flip(['actual_billing_value', 'invoice_no']));
         } elseif ($request->user()->employee && $request->user()->employee->role === 'backout_maker') {
-            $rules = array_intersect_key($rules, array_flip(['backout_term_date', 'backout_term_month', 'backout_term_year', 'reason_of_attrition', 'type_of_attrition']));
+            $rules = array_intersect_key($rules, array_flip(['backout_term_date', 'backout_term_month', 'backout_term_year', 'reason_of_attrition', 'type_of_attrition', 'bo_type',]));
+            if ($statusId == 8) { // Backout
+                $rules['backout_term_date'] = 'required|date';
+                $rules['backout_term_month'] = 'required|string|regex:/^\d{4}-\d{2}$/';
+                $rules['backout_term_year'] = 'required|integer|min:1900|max:9999';
+                if ($type === 'temporary') {
+                    $rules['bo_type'] = 'required|in:Client BO,Candidate BO';
+                }
+            } elseif ($statusId == 9) { // Termination
+                $rules['backout_term_date'] = 'required|date';
+                $rules['backout_term_month'] = 'required|string|regex:/^\d{4}-\d{2}$/';
+                $rules['backout_term_year'] = 'required|integer|min:1900|max:9999';
+                $rules['reason_of_attrition'] = 'required|string|max:1000';
+                $rules['type_of_attrition'] = 'required|in:Voluntary,Involuntary';
+            }
         }
 
         \Log::info("Validation rules applied for {$type}:", ['rules' => $rules, 'request_data' => $request->all()]);
