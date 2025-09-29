@@ -11,6 +11,7 @@ use App\Models\StatusMaster;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -592,6 +593,8 @@ class JobSeekerController extends Controller
                 return JobSeeker::create($data);
             });
 
+            $this->sendJobSeekerEmail($jobSeeker, 'created', $user, []);
+
             $counts = $this->getCounts($user, $employee, $type);
 
             return to_route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
@@ -626,6 +629,18 @@ class JobSeekerController extends Controller
             $isTemporary = $type === 'temporary';
             $user = auth()->user();
             $employee = $user->employee;
+            if (!$employee) {
+                Log::error("Employee record not found for user", [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'job_seeker_id' => $id,
+                    'type' => $type,
+                ]);
+                return Redirect::route("job-seekers.{$type}.index", ['status_filter' => 'Pending'])->with([
+                    'error' => 'Unauthorized: No employee record associated with your account.',
+                ]);
+            }
+
             $isAdmin = $user->role === 'admin';
             $isMaker = $employee && $employee->role === 'maker';
             $isChecker = $employee && $employee->role === 'checker';
@@ -662,8 +677,38 @@ class JobSeekerController extends Controller
 
             $validated = $request->validate($this->validationRules($request, $id));
 
-            $jobSeeker = DB::transaction(function () use ($request, $validated, $id, $user, $employee, $isAdmin, $isMaker, $isChecker, $isPOMaker, $isFinanceMaker, $isFinanceChecker, $isBackoutMaker, $isBackoutChecker, $type, $isTemporary) {
+            $result = DB::transaction(function () use ($request, $validated, $id, $user, $employee, $isAdmin, $isMaker, $isChecker, $isPOMaker, $isFinanceMaker, $isFinanceChecker, $isBackoutMaker, $isBackoutChecker, $type, $isTemporary) {
                 $jobSeeker = JobSeeker::where('job_seeker_type', ucfirst($type))->findOrFail($id);
+
+                // Capture original values for changed fields
+                $original = $jobSeeker->getOriginal();
+                $changedFields = [];
+                $dateFields = ['selection_date', 'offer_date', 'join_date', 'qly_date'];
+
+                foreach ($validated as $key => $newValue) {
+                    $oldValue = $original[$key] ?? null;
+
+                    // Normalize date fields to Y-m-d for comparison
+                    if (in_array($key, $dateFields)) {
+                        $oldDate = $oldValue ? Carbon::parse($oldValue)->format('Y-m-d') : null;
+                        $newDate = $newValue ? Carbon::parse($newValue)->format('Y-m-d') : null;
+                        if ($oldDate !== $newDate) {
+                            $changedFields[$key] = [
+                                'old' => $oldValue,
+                                'new' => $newValue,
+                            ];
+                        }
+                    } else {
+                        // Use loose comparison for non-date fields
+                        if ($oldValue != $newValue) {
+                            $changedFields[$key] = [
+                                'old' => $oldValue,
+                                'new' => $newValue,
+                            ];
+                        }
+                    }
+                }
+
                 $data = $validated;
 
                 if ($isPOMaker) {
@@ -726,8 +771,23 @@ class JobSeekerController extends Controller
                 }
 
                 $jobSeeker->update($data);
-                return $jobSeeker;
+                return [$jobSeeker, $changedFields];
             });
+
+            // Unpack jobSeeker and changedFields
+            [$jobSeeker, $changedFields] = $result;
+
+            // Log changed fields for debugging
+            Log::info("Job Seeker updated, sending email", [
+                'job_seeker_id' => $id,
+                'type' => $type,
+                'changed_fields' => $changedFields,
+                'user_id' => $user->id,
+            ]);
+
+            // Send email notification with changed fields
+            $this->sendJobSeekerEmail($jobSeeker, 'updated', $user, $changedFields);
+
 
             $counts = $this->getCounts($user, $employee, $type);
 
@@ -886,6 +946,9 @@ class JobSeekerController extends Controller
                 return $jobSeeker;
             });
 
+            // Send email notification
+            $this->sendJobSeekerEmail($jobSeeker, 'approved', $user, []);
+
             $counts = $this->getCounts(auth()->user(), $employee, $type);
 
             return Redirect::route("job-seekers.{$type}.index", ['status_filter' => 'Approved'])->with([
@@ -1034,6 +1097,9 @@ class JobSeekerController extends Controller
                 return $updatedJobSeeker;
             });
 
+            // Send email notification
+            $this->sendJobSeekerEmail($jobSeeker, 'rejected', $user, []);
+
             $counts = $this->getCounts(auth()->user(), $employee, $type);
 
             \Log::info("Reject successful for Job Seeker ID {$id}", [
@@ -1063,6 +1129,122 @@ class JobSeekerController extends Controller
         }
     }
 
+
+    protected function sendJobSeekerEmail($jobSeeker, $action, $user, $changedFields = [])
+    {
+        $recipients = [];
+        $cc = [];
+
+        // Fetch maker and checker emails
+        if ($jobSeeker->maker_id && $maker = $jobSeeker->maker) {
+            if (filter_var($maker->email, FILTER_VALIDATE_EMAIL)) {
+                $recipients[] = $maker->email;
+            } else {
+                Log::warning("Invalid maker email for Job Seeker ID {$jobSeeker->id}", [
+                    'maker_id' => $jobSeeker->maker_id,
+                    'email' => $maker->email,
+                ]);
+            }
+
+            if ($maker->is_self_checker) {
+                // Maker is also the checker, no need to add checker separately
+            } elseif ($jobSeeker->checker_id && $checker = $jobSeeker->checker) {
+                if (filter_var($checker->email, FILTER_VALIDATE_EMAIL)) {
+                    $cc[] = $checker->email;
+                } else {
+                    Log::warning("Invalid checker email for Job Seeker ID {$jobSeeker->id}", [
+                        'checker_id' => $jobSeeker->checker_id,
+                        'email' => $checker->email,
+                    ]);
+                }
+            }
+        }
+
+        // Add static emails
+        $staticEmails = [
+            config('app.static_email_1'),
+            config('app.static_email_2'),
+            config('app.static_email_3'),
+        ];
+
+        Log::debug("Static emails retrieved", [
+            'job_seeker_id' => $jobSeeker->id,
+            'action' => $action,
+            'static_emails' => $staticEmails,
+        ]);
+
+        foreach ($staticEmails as $index => $staticEmail) {
+            if ($staticEmail && filter_var($staticEmail, FILTER_VALIDATE_EMAIL)) {
+                $cc[] = $staticEmail;
+            } else {
+                Log::warning("Invalid or missing static email for Job Seeker notification", [
+                    'email' => $staticEmail,
+                    'index' => $index + 1,
+                    'job_seeker_id' => $jobSeeker->id,
+                ]);
+            }
+        }
+
+        // Remove duplicates
+        $cc = array_unique($cc);
+
+        if (empty($recipients) && empty($cc)) {
+            Log::error("No valid recipients for Job Seeker email notification", [
+                'job_seeker_id' => $jobSeeker->id,
+                'action' => $action,
+                'attempted_recipients' => $recipients,
+                'attempted_cc' => $cc,
+            ]);
+            session()->flash('error', 'Job Seeker action completed, but no valid email recipients found.');
+            return;
+        }
+
+        // Determine subject based on action
+        $subject = match ($action) {
+            'created' => "New {$jobSeeker->job_seeker_type} Job Seeker Created - {$jobSeeker->consultant_name}",
+            'approved' => "{$jobSeeker->job_seeker_type} Job Seeker Approved - {$jobSeeker->consultant_name}",
+            'rejected' => "{$jobSeeker->job_seeker_type} Job Seeker Rejected - {$jobSeeker->consultant_name}",
+            'updated' => "{$jobSeeker->job_seeker_type} Job Seeker Updated - {$jobSeeker->consultant_name}",
+            default => "{$jobSeeker->job_seeker_type} Job Seeker Notification - {$jobSeeker->consultant_name}",
+        };
+
+        try {
+            Mail::send('emails.job_seeker_notification', [
+                'jobSeeker' => $jobSeeker,
+                'action' => $action,
+                'user' => $user,
+                'changedFields' => $changedFields,
+            ], function ($message) use ($recipients, $cc, $subject) {
+                $message->from(config('mail.from.address'), config('mail.from.name'));
+                if (!empty($recipients)) {
+                    $message->to($recipients);
+                }
+                if (!empty($cc)) {
+                    $message->cc($cc);
+                }
+                $message->subject($subject);
+            });
+
+            Log::info("Job Seeker email sent successfully", [
+                'job_seeker_id' => $jobSeeker->id,
+                'action' => $action,
+                'recipients' => $recipients,
+                'cc' => $cc,
+                'subject' => $subject,
+                'changed_fields' => $changedFields,
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to send Job Seeker email notification", [
+                'job_seeker_id' => $jobSeeker->id,
+                'action' => $action,
+                'recipients' => $recipients,
+                'cc' => $cc,
+                'changed_fields' => $changedFields,
+                'error' => $e->getMessage(),
+            ]);
+            session()->flash('error', 'Job Seeker action completed, but email notification failed: ' . $e->getMessage());
+        }
+    }
 
     public function show($type, $id)
     {

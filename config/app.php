@@ -99,6 +99,12 @@ return [
 
     'key' => env('APP_KEY'),
 
+    // Static emails for JobSeeker notifications
+    'static_email_1' => env('STATIC_EMAIL_1', ''),
+    'static_email_2' => env('STATIC_EMAIL_2', ''),
+    'static_email_3' => env('STATIC_EMAIL_3', ''),
+
+
     'previous_keys' => [
         ...array_filter(
             explode(',', env('APP_PREVIOUS_KEYS', ''))
